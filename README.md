@@ -78,9 +78,18 @@ struct ContentView: View {
 }
 ```
 
-## Example Video
+## Examples
+
+### Video - iOS
 
 [LogExportScreen demo video](https://github.com/user-attachments/assets/9aea2fb6-a471-400a-ba47-85b1f9e90884)
+
+### Images
+
+|||
+|-|-|
+| ![iOS](.github/data/ios.png) | ![iPadOS](.github/data/ipados.png) |
+| ![macOS](.github/data/macos.png) | ![visionOS](.github/data/visionos.png) |
 
 ## Contributing
 
