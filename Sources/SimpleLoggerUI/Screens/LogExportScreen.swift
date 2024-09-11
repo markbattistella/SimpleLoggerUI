@@ -26,12 +26,18 @@ public struct LogExportScreen: View {
     // MARK: - Private Properties
     
     private let navigationTitle: String
-    private let navigationBarTitleDisplayMode: NavigationBarItem.TitleDisplayMode
     private let logger = Logger(category: .fileSystem)
-    
+
+    #if !os(macOS)
+    private let navigationBarTitleDisplayMode: NavigationBarItem.TitleDisplayMode
+    #endif
+
     // MARK: - Initializer
     
+    #if !os(macOS)
+
     /// Initializes the LogExportScreen with the required parameters.
+    ///
     /// - Parameters:
     ///   - vm: The logger manager responsible for handling log data.
     ///   - navigationTitle: The title displayed in the navigation bar.
@@ -45,7 +51,25 @@ public struct LogExportScreen: View {
         self.navigationTitle = navigationTitle
         self.navigationBarTitleDisplayMode = navigationBarTitleDisplayMode
     }
+
+    #else
+
+    /// Initializes the LogExportScreen with the required parameters.
+    ///
+    /// - Parameters:
+    ///   - vm: The logger manager responsible for handling log data.
+    ///   - navigationTitle: The title displayed in the navigation bar.
+    ///   - navigationBarTitleDisplayMode: The display mode for the navigation bar title.
+    public init(
+        vm: LoggerManager,
+        navigationTitle: String = "Export Logs"
+    ) {
+        self._vm = StateObject(wrappedValue: vm)
+        self.navigationTitle = navigationTitle
+    }
     
+    #endif
+
     // MARK: - Body
     
     public var body: some View {
@@ -60,19 +84,16 @@ public struct LogExportScreen: View {
             }
         }
         .navigationTitle(navigationTitle)
+
+        #if !os(macOS)
         .navigationBarTitleDisplayMode(navigationBarTitleDisplayMode)
+        #endif
+
         .interactiveDismissDisabled()
         .opacity(vm.isExporting ? 0.6 : 1)
         .disabled(vm.isExporting)
         .animation(.easeInOut, value: vm.isExporting)
-        .toolbar {
-            ToolbarItem(placement: .topBarTrailing) {
-                overlayProgress.transition(.opacity)
-            }
-            ToolbarItem(placement: .topBarTrailing) {
-                copiedConfirmation.transition(.opacity)
-            }
-        }
+        .toolbar { toolbarComponents }
         .task { try? await vm.fetchLogEntries() }
         .onChange(of: vm.excludeSystemLogs) { _ in
             Task { try? await vm.fetchLogEntries() }
@@ -190,28 +211,38 @@ extension LogExportScreen {
 // MARK: - View Components
 
 extension LogExportScreen {
-    
+
+    /// A group of toolbar components.
+    @ToolbarContentBuilder
+    private var toolbarComponents: some ToolbarContent {
+        ToolbarItemGroup(placement: .navigation) {
+            overlayProgress
+            copiedConfirmation
+        }
+    }
+
     /// A view displaying the overlay progress indicator when exporting.
     private var overlayProgress: some View {
         ProgressView()
             .padding(4)
-            .background(Color(.tertiarySystemFill))
+            .background(Color(.gray).opacity(0.2))
             .clipShape(.rect(cornerRadius: 8))
             .opacity(vm.isExporting ? 1 : 0)
+            .transition(.opacity)
     }
-    
+
     /// A view displaying a confirmation message when content is copied to the clipboard.
     private var copiedConfirmation: some View {
         Text("Copied!")
             .font(.caption)
-            .padding(4)
+            .padding(.vertical, 8)
             .padding(.horizontal, 8)
-            .background(Color(.tertiarySystemFill))
+            .background(Color(.gray).opacity(0.2))
             .clipShape(.rect(cornerRadius: 8))
             .opacity(showToast ? 1 : 0)
             .transition(.opacity)
     }
-    
+
     /// A section view for selecting the log filter type.
     private var filterTypeSection: some View {
         Section {

@@ -48,7 +48,10 @@ internal struct FilterSheet: View {
                 )
             }
             .navigationTitle("Filters")
+
+            #if !os(macOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
         }
     }
 }

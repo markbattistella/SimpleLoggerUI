@@ -66,13 +66,17 @@ public struct LogListScreen: View {
                 LogCell(for: log)
             }
             .navigationTitle("View Logs")
+
+            #if !os(macOS)
             .navigationBarTitleDisplayMode(.inline)
+            #endif
+
             .searchable(text: $searchText)
             .toolbar {
-                ToolbarItem(placement: .navigationBarTrailing) {
-                    Button(action: {
+                ToolbarItem(placement: .navigation) {
+                    Button {
                         isFilterSheetPresented.toggle()
-                    }) {
+                    } label: {
                         Image(systemName: "slider.horizontal.3")
                     }
                     .opacity(logs.isEmpty ? 0 : 1)
