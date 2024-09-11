@@ -80,7 +80,7 @@ struct ContentView: View {
 
 ## Example Video
 
-![LogExportScreen demo video](.github/data/video.webm)
+[LogExportScreen demo video](https://github.com/user-attachments/assets/9aea2fb6-a471-400a-ba47-85b1f9e90884)
 
 ## Contributing
 
