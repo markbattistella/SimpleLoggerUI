@@ -17,7 +17,7 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(path: "../SimpleLogger")
+        .package(url: "https://github.com/markbattistella/SimpleLogger", from: "1.0.0")
     ],
     targets: [
         .target(
