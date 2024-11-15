@@ -8,7 +8,7 @@ let package = Package(
         .iOS(.v16),
         .macOS(.v13),
         .macCatalyst(.v16),
-        .visionOS(.v1)
+        .visionOS(.v1),
     ],
     products: [
         .library(
@@ -17,7 +17,7 @@ let package = Package(
         )
     ],
     dependencies: [
-        .package(path: "../SimpleLogger")
+        .package(url: "https://github.com/markbattistella/SimpleLogger", from: "1.0.0")
     ],
     targets: [
         .target(
