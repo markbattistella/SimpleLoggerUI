@@ -4,29 +4,29 @@
 // Website: https://markbattistella.com
 //
 
+import SimpleLogger
 import SwiftUI
-import OSLog
 
 /// A view representing a log entry cell, displaying detailed information about the log entry
 /// including its date, subsystem, category, level, and message.
 internal struct LogCell: View {
-    
+
     // MARK: - Private Properties
-    
+
     /// The log entry to be displayed in the cell.
     private let log: OSLogEntryLog
-    
+
     // MARK: - Initializer
-    
+
     /// Initializes the `LogCell` with a specific log entry.
     ///
     /// - Parameter log: The log entry to display.
     init(for log: OSLogEntryLog) {
         self.log = log
     }
-    
+
     // MARK: - Body
-    
+
     var body: some View {
         VStack(alignment: .leading) {
             headerSection
@@ -37,9 +37,9 @@ internal struct LogCell: View {
         .listRowBackground(log.level.color.opacity(0.1))
         .frame(maxWidth: .infinity, alignment: .leading)
     }
-    
+
     // MARK: - Private View Components
-    
+
     /// A view displaying the header section of the log cell with a level icon and formatted date.
     private var headerSection: some View {
         HStack {
@@ -55,7 +55,7 @@ internal struct LogCell: View {
                 .font(.system(.footnote, design: .monospaced))
         }
     }
-    
+
     /// A view displaying the detailed information of the log entry including subsystem,
     /// category, level, and message.
     private var logDetailsSection: some View {
