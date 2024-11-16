@@ -4,16 +4,15 @@
 // Website: https://markbattistella.com
 //
 
-import SwiftUI
 import SimpleLogger
+import SwiftUI
 import UniformTypeIdentifiers
-import OSLog
 
 /// A view that provides an interface for exporting logs, with various filtering and action options.
 public struct LogExportScreen: View {
-    
+
     // MARK: - State Properties
-    
+
     @StateObject private var vm: LoggerManager
     @State private var showFileExporter: Bool = false
     @State private var logFileDocument: MultiTypeFileDocument?
@@ -22,18 +21,18 @@ public struct LogExportScreen: View {
     @State private var showAlert: Bool = false
     @State private var alertMessage: String = ""
     @State private var showToast: Bool = false
-    
+
     // MARK: - Private Properties
-    
+
     private let navigationTitle: String
-    private let logger = Logger(category: .fileSystem)
+    private let logger = SimpleLogger(category: .fileSystem)
 
     #if !os(macOS)
     private let navigationBarTitleDisplayMode: NavigationBarItem.TitleDisplayMode
     #endif
 
     // MARK: - Initializer
-    
+
     #if !os(macOS)
 
     /// Initializes the LogExportScreen with the required parameters.
@@ -67,11 +66,11 @@ public struct LogExportScreen: View {
         self._vm = StateObject(wrappedValue: vm)
         self.navigationTitle = navigationTitle
     }
-    
+
     #endif
 
     // MARK: - Body
-    
+
     public var body: some View {
         Form {
             filterTypeSection
@@ -118,17 +117,17 @@ public struct LogExportScreen: View {
 // MARK: - Private Methods
 
 extension LogExportScreen {
-    
+
     /// Copies logs to the clipboard in plain text format.
     private func copyToClipboard() {
         Task {
-            let logs = await vm.exportLogs(as: .plainText)
+            let logs = vm.exportLogs(as: .plainText)
             let contentToPaste = logs.isEmpty ? "Nothing to paste" : logs
-            await setToPasteBoard(contentToPaste)
+            setToPasteBoard(contentToPaste)
             showToast = true
         }
     }
-    
+
     /// Exports the log file in the specified format and presents the file exporter.
     /// - Parameter type: The type of file format to export the logs as.
     private func exportLogFile(type: UTType) {
@@ -151,7 +150,7 @@ extension LogExportScreen {
             }
         }
     }
-    
+
     /// Shares the log file in the specified format.
     ///
     /// - Parameter type: The type of file format for sharing the logs.
@@ -167,7 +166,7 @@ extension LogExportScreen {
         }
         return url
     }
-    
+
     /// Creates a URL for saving the log file based on the current process and timestamp.
     ///
     /// - Parameter type: The type of file format for the logs.
@@ -178,7 +177,7 @@ extension LogExportScreen {
         let fullFile = "\(fileName).\(fileExtension)"
         return URL.temporaryDirectory.appendingPathComponent(fullFile)
     }
-    
+
     /// Handles the result of the file export operation.
     ///
     /// - Parameter result: A result containing either a URL of the exported file or an error.
@@ -193,7 +192,7 @@ extension LogExportScreen {
         }
         self.logFileDocument = nil
     }
-    
+
     /// Sets the provided string to the system clipboard.
     ///
     /// - Parameter string: The string to be copied to the clipboard.
@@ -258,7 +257,7 @@ extension LogExportScreen {
             Text(filterFooterText)
         }
     }
-    
+
     /// A section view for log export and filtering options.
     private var filterOptions: some View {
         Section {
@@ -271,27 +270,29 @@ extension LogExportScreen {
         } header: {
             Text("Options")
         } footer: {
-            Text("If you activate **Exclude system logs** then only entries linked to this app's identifier will be extracted.")
+            Text(
+                "If you activate **Exclude system logs** then only entries linked to this app's identifier will be extracted."
+            )
         }
     }
-    
+
     /// A section view for action buttons including copy, export, and share log file.
     private var actionButtonsSection: some View {
         Section {
             ActionButton("Copy to clipboard", systemImage: "doc.on.doc") {
                 copyToClipboard()
             }
-            
+
             ActionButton("Export log file", systemImage: "square.and.arrow.down") {
                 exportLogFile(type: selectedExport)
             }
-            
+
             ShareLink(item: shareLogFile(type: selectedExport)) {
                 Label("Share log file", systemImage: "square.and.arrow.up")
             }
         }
     }
-    
+
     /// A segmented control to refine log filters based on selected type.
     @ViewBuilder
     private var filterBySegments: some View {
@@ -302,7 +303,7 @@ extension LogExportScreen {
             case .preset: presetSegment
         }
     }
-    
+
     /// A view for selecting a specific date for log filtering.
     private var specificDateSegment: some View {
         DatePicker(
@@ -312,7 +313,7 @@ extension LogExportScreen {
             displayedComponents: .date
         )
     }
-    
+
     /// A view for selecting a date range for log filtering.
     private var dateRangeSegment: some View {
         Group {
@@ -330,7 +331,7 @@ extension LogExportScreen {
             )
         }
     }
-    
+
     /// A view for selecting an hour range within a specific date for log filtering.
     private var hourRangeSegment: some View {
         Group {
@@ -354,7 +355,7 @@ extension LogExportScreen {
             )
         }
     }
-    
+
     /// A view for selecting preset options for quick log filtering.
     private var presetSegment: some View {
         Picker("Preset option", selection: $vm.selectedPreset) {
@@ -363,18 +364,22 @@ extension LogExportScreen {
             }
         }
     }
-    
+
     /// Provides descriptive text for the footer of the filter section.
     private var filterFooterText: String {
         switch vm.filterType {
             case .specificDate:
-                return "Select a specific date to filter logs from that day only. All times are considered within the selected date."
+                return
+                    "Select a specific date to filter logs from that day only. All times are considered within the selected date."
             case .dateRange:
-                return "Choose a start and end date to filter logs within a specific date range. Logs from both dates will be included."
+                return
+                    "Choose a start and end date to filter logs within a specific date range. Logs from both dates will be included."
             case .hourRange:
-                return "Set a specific date and a range of hours to narrow down logs to a precise time window within the chosen day."
+                return
+                    "Set a specific date and a range of hours to narrow down logs to a precise time window within the chosen day."
             case .preset:
-                return "Select a preset option to quickly apply common date and time filters without manual adjustments."
+                return
+                    "Select a preset option to quickly apply common date and time filters without manual adjustments."
         }
     }
 }

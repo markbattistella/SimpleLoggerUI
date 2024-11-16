@@ -4,8 +4,8 @@
 // Website: https://markbattistella.com
 //
 
+import SimpleLogger
 import SwiftUI
-import OSLog
 
 /// A view that displays a list of log entries with search and filter functionalities. Users can
 /// filter logs by category and level, and search within log messages.
@@ -43,9 +43,9 @@ public struct LogListScreen: View {
     /// Filters logs based on the search text, selected categories, and selected levels.
     private var filteredLogs: [OSLogEntryLog] {
         logs.filter { log in
-            (searchText.isEmpty || log.composedMessage.localizedCaseInsensitiveContains(searchText)) &&
-            (selectedCategories.isEmpty || selectedCategories.contains(log.category)) &&
-            (selectedLevels.isEmpty || selectedLevels.contains(log.level))
+            (searchText.isEmpty || log.composedMessage.localizedCaseInsensitiveContains(searchText))
+                && (selectedCategories.isEmpty || selectedCategories.contains(log.category))
+                && (selectedLevels.isEmpty || selectedLevels.contains(log.level))
         }
     }
 

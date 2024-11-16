@@ -6,4 +6,4 @@
 
 import OSLog
 
-extension OSLogEntryLog: Identifiable {}
+extension OSLogEntryLog: @retroactive Identifiable {}

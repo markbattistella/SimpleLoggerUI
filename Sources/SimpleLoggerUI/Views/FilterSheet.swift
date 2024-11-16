@@ -4,8 +4,8 @@
 // Website: https://markbattistella.com
 //
 
+import SimpleLogger
 import SwiftUI
-import OSLog
 
 /// A view that presents a filter sheet allowing users to select categories and log levels. The
 /// selections are managed via bindings, enabling the parent view to respond to changes.
