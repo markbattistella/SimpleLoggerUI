@@ -5,25 +5,23 @@ import PackageDescription
 let package = Package(
     name: "SimpleLoggerUI",
     platforms: [
-        .iOS(.v16),
-        .macOS(.v13),
-        .macCatalyst(.v16),
-        .visionOS(.v1),
+        .iOS(.v17),
+        .macCatalyst(.v17),
+        .macOS(.v14),
+        .tvOS(.v17),
+        .watchOS(.v10),
+        .visionOS(.v1)
     ],
     products: [
-        .library(
-            name: "SimpleLoggerUI",
-            targets: ["SimpleLoggerUI"]
-        )
+        .library(name: "SimpleLoggerUI", targets: ["SimpleLoggerUI"])
     ],
     dependencies: [
-        .package(url: "https://github.com/markbattistella/SimpleLogger", from: "2.0.0")
+        .package(url: "https://github.com/markbattistella/SimpleLogger", from: "25.12.0")
     ],
     targets: [
         .target(
             name: "SimpleLoggerUI",
             dependencies: ["SimpleLogger"],
-            exclude: [],
             swiftSettings: [.enableExperimentalFeature("StrictConcurrency")]
         )
     ]

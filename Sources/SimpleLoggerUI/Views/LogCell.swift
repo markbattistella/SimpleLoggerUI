@@ -4,67 +4,63 @@
 // Website: https://markbattistella.com
 //
 
-import SimpleLogger
 import SwiftUI
+import SimpleLogger
 
-/// A view representing a log entry cell, displaying detailed information about the log entry
-/// including its date, subsystem, category, level, and message.
-internal struct LogCell: View {
+#Preview {
+    Form {
+        LogListScreen.LogCell(
+            log: LoggerRepresentation(
+                level: .error,
+                subsystem: "com.markbattistella.package.SimpleLogger",
+                category: LoggerCategory.network.rawValue,
+                message: "Request failed with status code 500"
+            )
+        )
+    }
+    .environment(LoggerManager())
+}
 
-    // MARK: - Private Properties
+extension LogListScreen {
 
-    /// The log entry to be displayed in the cell.
-    private let log: OSLogEntryLog
-
-    // MARK: - Initializer
-
-    /// Initializes the `LogCell` with a specific log entry.
+    /// A list row view that displays the details of a single log entry.
     ///
-    /// - Parameter log: The log entry to display.
-    init(for log: OSLogEntryLog) {
-        self.log = log
-    }
+    /// `LogCell` presents a concise summary of a log, including its timestamp, severity level,
+    /// subsystem, category, and message. Visual styling reflects the log level to improve
+    /// scannability within a list.
+    internal struct LogCell: View {
 
-    // MARK: - Body
+        /// The log entry represented by this cell.
+        let log: LoggerRepresentation
 
-    var body: some View {
-        VStack(alignment: .leading) {
-            headerSection
-            Divider().background(log.level.color)
-            logDetailsSection
-        }
-        .font(.footnote)
-        .listRowBackground(log.level.color.opacity(0.1))
-        .frame(maxWidth: .infinity, alignment: .leading)
-    }
+        var body: some View {
+            VStack(alignment: .leading) {
+                HStack(spacing: 16) {
+                    Text(log.date, format: .iso8601)
+                        .monospaced()
+                    Spacer()
+                    Text(log.level.description)
+                        .fontWeight(.medium)
+                        .foregroundStyle(.white)
+                        .padding(.horizontal, 12)
+                        .padding(.vertical, 6)
+                        .frame(minWidth: 60, maxHeight: 26)
+                        .background(log.level.color, in: .rect(cornerRadius: 8))
+                }
+                .padding(.bottom, 6)
 
-    // MARK: - Private View Components
-
-    /// A view displaying the header section of the log cell with a level icon and formatted date.
-    private var headerSection: some View {
-        HStack {
-            ZStack {
-                RoundedRectangle(cornerRadius: 6)
-                    .fill(log.level.color)
-                    .frame(width: 24, height: 24)
-                Image(systemName: log.level.sfSymbol)
-                    .frame(width: 22, height: 22)
-                    .foregroundStyle(.white)
+                VStack(alignment: .leading) {
+                    LabeledContent("Subsystem", value: log.subsystem)
+                    LabeledContent("Category", value: log.category)
+                    LabeledContent("Message", value: log.message)
+                        .multilineTextAlignment(.leading)
+                }
+                .labeledContentStyle(.vertical)
             }
-            Text(log.date.formatted(date: .long, time: .standard))
-                .font(.system(.footnote, design: .monospaced))
+            .font(.caption)
+            .listRowBackground(log.level.color.opacity(0.1))
+            .listRowSeparatorTint(log.level.color, edges: .bottom)
+            .listRowSeparatorTint(.clear, edges: .top)
         }
-    }
-
-    /// A view displaying the detailed information of the log entry including subsystem,
-    /// category, level, and message.
-    private var logDetailsSection: some View {
-        Group {
-            LabeledContent("Subsystem", value: log.subsystem)
-            LabeledContent("Category", value: log.category)
-            LabeledContent("Level", value: log.level.description)
-            LabeledContent("Message", value: log.composedMessage)
-        }
-        .labeledContentStyle(.vertical)
     }
 }

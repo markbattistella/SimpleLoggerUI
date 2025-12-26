@@ -11,21 +11,50 @@
 
 </div>
 
-`SimpleLoggerUI` is a Swift package that provides a set of convenient SwiftUI views to easily integrate logging functionalities into your iOS or macOS applications. This package allows developers to display, filter, and export log entries without the need to build custom interfaces from scratch.
+`SimpleLoggerUI` is a Swift package that provides a complete, ready-to-use SwiftUI interface for inspecting logs collected via the [`SimpleLogger`](https://github.com/markbattistella/SimpleLogger) package.
 
-Features
+It includes a full log list screen with filtering, exporting, and platform-appropriate UI behaviour for iOS, macOS, iPadOS, and visionOS—without requiring you to build or manage any custom logging UI.
 
-- **Filtering:** Easily filter logs by categories, levels, and search text.
-- **Exporting:** Export logs in multiple formats, including `.log`, `.json`, `.md`, `.txt`, and `.csv`.
-- **User Friendly:** Intuitive and accessible UI components for seamless integration into your application.
+## Features
+
+- **Log list screen**
+  - Displays logs with timestamp, level, subsystem, category, and message
+  - Visual styling adapts to log severity for improved scan-ability
+  - Pull-to-refresh support
+
+- **Filtering**
+  - Exclude system logs
+  - Filter by:
+    - Specific date
+    - Date range
+    - Hour range (within a single day)
+    - Preset ranges (e.g. recent periods)
+  - Filter by log level with multi-selection support
+
+- **Exporting**
+  - Export formats:
+    - Plain log
+    - JSON
+    - JSON Lines
+    - CSV (configurable delimiter)
+  - Optional gzip compression for file exports
+  - Export to file system or copy directly to clipboard
+
+- **Cross-platform**
+  - Adaptive navigation and toolbar behaviour
+  - Native file exporter integration
+  - macOS and iOS-appropriate interaction patterns
 
 ## Installation
 
-Add `SimpleLoggerUI` to your Swift project using Swift Package Manager.
+Add `SimpleLoggerUI` using Swift Package Manager.
 
 ```swift
 dependencies: [
-  .package(url: "https://github.com/markbattistella/SimpleLoggerUI", from: "1.0.0")
+  .package(
+    url: "https://github.com/markbattistella/SimpleLoggerUI", 
+    from: "1.0.0"
+  )
 ]
 ```
 
@@ -33,63 +62,79 @@ Alternatively, you can add `SimpleLoggerUI` using Xcode by navigating to `File >
 
 ## Usage
 
-### LogExportScreen
-
-`LogExportScreen` provides a user interface for exporting log entries with various filtering options, making it easy to select specific logs and export them in the desired format.
-
-> [!Important]
-> `SimpleLoggerUI` requires the `SimpleLogger` package, which is added by default. `SimpleLogger` provides all the OS logging logic.
-
-```swift
-import SwiftUI
-import SimpleLogger
-import SimpleLoggerUI
-
-struct ContentView: View {
-  @StateObject private var loggerManager = LoggerManager()
-
-  var body: some View {
-    NavigationView {
-      LogExportScreen(vm: loggerManager)
-    }
-  }
-}
-```
-
 ### LogListScreen
 
-`LogListScreen` displays log entries in a searchable list format, allowing users to browse, search, and filter logs by categories and levels.
+`LogListScreen` is the primary entry point. It manages fetching, filtering, and exporting logs internally using `LoggerManager`.
 
-> [!Note]
-> `LogListScreen` is already included in `LogExportScreen`. Use the list screen if you want to use it standalone without the export view.
+> ![IMPORTANT]
+> You do not need to supply logs manually.
 
 ```swift
 import SwiftUI
 import SimpleLoggerUI
 
 struct ContentView: View {
-  @State private var logs: [OSLogEntryLog] = []
-
   var body: some View {
-    NavigationView {
-      LogListScreen(logs: logs)
+    NavigationStack {
+      LogListScreen()
     }
   }
 }
 ```
 
-## Examples
+LogListScreen automatically:
 
-### Video - iOS
+- Fetches logs on appearance
+- Supports pull-to-refresh
+- Provides toolbar actions for filtering and exporting
+- Displays loading and empty states
 
-[LogExportScreen demo video](https://github.com/user-attachments/assets/9aea2fb6-a471-400a-ba47-85b1f9e90884)
+## Filtering Logs
 
-### Images
+Tap Filter in the toolbar to open the filter sheet.
 
-|||
-|-|-|
-| ![iOS](.github/data/ios.png) | ![iPadOS](.github/data/ipados.png) |
-| ![macOS](.github/data/macos.png) | ![visionOS](.github/data/visionos.png) |
+Available filter modes:
+
+### Specific date
+
+View logs recorded on a single calendar day.
+
+### Date range
+
+View logs across multiple days (inclusive).
+
+### Hour range
+
+Select a date and restrict logs to a specific hour window.
+
+### Preset
+
+Quickly apply commonly used time ranges.
+
+You can also:
+
+- Exclude system logs
+- Select which log levels are visible
+- Filter changes are applied immediately.
+
+## Exporting Logs
+
+Tap Export in the toolbar to open the export sheet.
+
+### Export options
+
+- Output formats:
+  - `.log`
+  - `.json`
+  - `.jsonl`
+  - `.csv`
+- CSV delimiter selection
+- Optional gzip compression (file exports only)
+
+### Export destinations
+
+- **Export to file:** Saves the export via the system file picker.
+- **Copy to clipboard:** Copies UTF-8 text in the selected format (compression ignored).
 
 ## Contributing
 
@@ -97,4 +142,4 @@ Contributions are welcome! Please fork the repository and submit a pull request 
 
 ## License
 
-`SimpleLoggerUI` is available under the MIT license. See the LICENSE file for more information.
+`SimpleLoggerUI` is available under the MIT license. See the LICENCE file for more information.
