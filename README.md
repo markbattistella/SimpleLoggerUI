@@ -13,7 +13,7 @@
 
 `SimpleLoggerUI` is a Swift package that provides a complete, ready-to-use SwiftUI interface for inspecting logs collected via the [`SimpleLogger`](https://github.com/markbattistella/SimpleLogger) package.
 
-It includes a full log list screen with filtering, exporting, and platform-appropriate UI behaviour for iOS, macOS, iPadOS, and visionOS—without requiring you to build or manage any custom logging UI.
+It includes a full log list screen with filtering, exporting, and platform-appropriate UI behaviour for iOS, macOS, iPadOS, tvOS, watchOS, and visionOS—without requiring you to build or manage any custom logging UI.
 
 ## Features
 
@@ -42,8 +42,19 @@ It includes a full log list screen with filtering, exporting, and platform-appro
 
 - **Cross-platform**
   - Adaptive navigation and toolbar behaviour
-  - Native file exporter integration
-  - macOS and iOS-appropriate interaction patterns
+  - Native file exporter integration where supported
+  - Clipboard export on platforms with a writable system clipboard
+  - Platform-appropriate interaction patterns
+
+## Requirements
+
+- Swift 6.0+
+- iOS 17.0+
+- macOS 14.0+
+- Mac Catalyst 17.0+
+- tvOS 17.0+
+- watchOS 10.0+
+- visionOS 1.0+
 
 ## Installation
 
@@ -53,7 +64,7 @@ Add `SimpleLoggerUI` using Swift Package Manager.
 dependencies: [
   .package(
     url: "https://github.com/markbattistella/SimpleLoggerUI", 
-    from: "1.0.0"
+    from: "26.2.21"
   )
 ]
 ```
@@ -119,7 +130,7 @@ You can also:
 
 ## Exporting Logs
 
-Tap Export in the toolbar to open the export sheet.
+On iOS, macOS, Mac Catalyst, and visionOS, tap Export in the toolbar to open the export sheet.
 
 ### Export options
 
@@ -133,8 +144,8 @@ Tap Export in the toolbar to open the export sheet.
 
 ### Export destinations
 
-- **Export to file:** Saves the export via the system file picker.
-- **Copy to clipboard:** Copies UTF-8 text in the selected format (compression ignored).
+- **Export to file:** Saves the export via the system file picker where file moving is available.
+- **Copy to clipboard:** Copies UTF-8 text in the selected format where a writable system clipboard is available (compression ignored).
 
 ## Contributing
 
